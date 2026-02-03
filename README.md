@@ -137,7 +137,7 @@ curl -X POST \
 
 ## 📈 Workflow Diagram
 
-![](assets/automation_workflow.png)
+![](assets/automation_worlflow.png)
 
 ---
 
