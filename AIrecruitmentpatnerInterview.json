@@ -1,0 +1,789 @@
+{
+  "name": "AIrecruitmentpatnerInterview",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "c0df1ab9-d280-471c-b0ed-b4462efe35c5",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d6474fd8-47b4-407e-9bc9-f5c27c8b3834",
+      "name": "Webhook",
+      "webhookId": "c0df1ab9-d280-471c-b0ed-b4462efe35c5"
+    },
+    {
+      "parameters": {
+        "jsCode": "let stringRevenue = $input.first().json.monthly_revenue;\nlet inputString = $input.first().json.biggest_challenge;\n\n//convert the revenue string to number\nfunction convertString(stringRevenue) {\n  if (!stringRevenue) return 0;\n\n  let regexNumber = stringRevenue.replace(/[$,]/g, '');\n  let revenue = parseFloat(regexNumber);\n  return revenue;\n}\n\n//count the number of characters in the sentence\nfunction countCharacters(inputString) {\n  if (!inputString) return 0;\n\n  return inputString.replace(/\\s+/g, '').length;\n}\n\nconst formattedRevenue = convertString(stringRevenue);\nconst characterCount = countCharacters(inputString);\n\nreturn [\n  {\n    ...$input.first().json,\n    formattedRevenue,\n    characterCount\n  }\n]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b3486172-0c1a-4fea-84df-e2e518e65829",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c88b3de7-81aa-4722-9677-94d1b4bc9bf8",
+              "leftValue": "={{ $json.formattedRevenue }}",
+              "rightValue": 10000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "ad3d248c-c48e-47f4-99be-fbaf7d25151b",
+              "leftValue": "={{ $json.characterCount }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "437a9e68-3d86-4cee-a393-eea2df75b499",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        -224
+      ],
+      "id": "c5e778d9-c928-4f51-b0bc-106111677e12",
+      "name": "Wait",
+      "webhookId": "fdb4587e-fcc7-409a-9289-6b104846e825"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3158cf5a-92d4-4b0c-8103-b95e32962cab",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        -224
+      ],
+      "id": "14d5d079-b2a1-4a4e-9d8f-11164cedc5f3",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1824,
+        -80
+      ],
+      "id": "b5e2c2d4-2d80-4257-808b-3ae3558b99b8",
+      "name": "Send a message",
+      "webhookId": "658f94b3-fa49-44ad-99b2-5ddc7bcf8980",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SUBYwmdFgIBmUnOb",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        -288
+      ],
+      "id": "608c3fcf-b242-4b46-9a32-8d0f70d9c901",
+      "name": "Send a message1",
+      "webhookId": "6de3c695-e347-4088-8377-555740b047c6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SUBYwmdFgIBmUnOb",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2000,
+        -288
+      ],
+      "id": "9b29c703-ca70-48dd-ab96-7e067e1ebf18",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2032,
+        -80
+      ],
+      "id": "ac5310dd-9f26-46ea-947b-c09fba866343",
+      "name": "Append row in sheet1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "35493dc0-0a9b-4152-94db-738b6e7a171a",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1088,
+        240
+      ],
+      "id": "6b63c73c-17f1-4a4f-a99f-ebb691cfbaf1",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        400
+      ],
+      "id": "2d03d1cc-730c-4beb-bf6a-4a4b80a05370",
+      "name": "Send a message2",
+      "webhookId": "2634d8b5-4383-413e-a18f-a044dd608036",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SUBYwmdFgIBmUnOb",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1312,
+        176
+      ],
+      "id": "eede9d0a-af78-4a18-8980-5e63069a401c",
+      "name": "Send a message3",
+      "webhookId": "37c70b36-27c8-48f7-8f22-34cfd4be6eda",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SUBYwmdFgIBmUnOb",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1600,
+        176
+      ],
+      "id": "917cd992-0d8c-42d9-9583-cf6b1f12ef7f",
+      "name": "Append row in sheet2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1616,
+        400
+      ],
+      "id": "f6328b3f-436a-4f93-ba84-ce20487a2e41",
+      "name": "Append row in sheet3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a prompt for email generation where the email should acknowledge the {{ $json.biggest_challenge }}, position Sarah as the\nsolution, and include a soft CTA to book a call. use {{ $json.business_type }} to better inform on the business and how Sarah can come in and help increase {{ $json.monthly_revenue }}",
+        "options": {
+          "systemMessage": "You are a prompt engineer."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        656,
+        -224
+      ],
+      "id": "115f6f3d-5116-44aa-bc7d-416d2921402e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        656,
+        16
+      ],
+      "id": "3c2a87e6-041d-417e-9e76-9499fd4c9509",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "IDn4rGPysXqLukyJ",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1216,
+        -224
+      ],
+      "id": "2329017c-c685-45ff-9ba2-00a6e4d7e244",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1:1.5b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "3cc6bf20-790c-4808-ae43-f897c159e9a8",
+      "name": "Ollama Chat Model1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "IDn4rGPysXqLukyJ",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create an email message politely declining their business due to low  {{ $('Code in JavaScript').item.json.monthly_revenue }} or {{ $('Code in JavaScript').item.json.biggest_challenge }}.",
+        "options": {
+          "systemMessage": "You are an email assistant."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        592,
+        240
+      ],
+      "id": "2827e195-f2f7-4c4e-b082-abc17c590ed8",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1:1.5b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        432,
+        448
+      ],
+      "id": "b7ae06f2-111b-47ec-a70a-2add212e15da",
+      "name": "Ollama Chat Model2",
+      "credentials": {
+        "ollamaApi": {
+          "id": "IDn4rGPysXqLukyJ",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "Email automation"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        1232,
+        0
+      ],
+      "id": "2eacc89e-9d99-4b0f-b43a-05862c6f8871",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "wwvXF30bBE9xvpA5",
+          "name": "neondb"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        -224
+      ],
+      "id": "4a8404dc-9618-486d-8c50-0ad25e997cd7",
+      "name": "Wait1",
+      "webhookId": "332c07c3-a708-4043-97a0-20e2aaea6fbf"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        240
+      ],
+      "id": "3090c0aa-72c6-4489-bf7a-c0328020f862",
+      "name": "Wait2",
+      "webhookId": "7172b496-29ca-48e6-ab99-d9637b5785c3"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "Email automation for failed Leads"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        608,
+        448
+      ],
+      "id": "c3c9e995-eb48-482c-b3b5-06e35a2a43f8",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "wwvXF30bBE9xvpA5",
+          "name": "neondb"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "name": "Amanda Torres",
+          "email": "amanda@torresconsulting.com",
+          "business_type": "HR Consulting",
+          "monthly_revenue": "$25,000",
+          "biggest_challenge": "I'm completely overwhelmed with client delivery and have no time for sales. Every time I try to hire, it falls apart within months. Ineed systems but don't know where to start.",
+          "how_did_you_hear": "Podcast",
+          "phone": "555-234-5678"
+        }
+      }
+    ],
+    "AI Agent1": [
+      {
+        "json": {
+          "output": "Okay, so I need to create an email prompt based on this sample. The user provided a specific example that starts with \"Dear [Client]\" and then goes into their situation. It acknowledges the client's frustration, introduces Sarah as a solution provider, mentions potential benefits like revenue increase, and ends by inviting the client to schedule a call.\n\nThe goal is to make sure the prompt is clear and professional but also softens the invitation for scheduling a meeting. Maybe I should structure it with clear sections or bullet points instead of paragraphs. Let me think about each part:\n\n1. Start with \"Dear [Client]\" - that's straightforward.\n2. Acknowledge overwhelming stress and frustration - maybe mention the plate being full to show how busy they are.\n3. Introduce Sarah as a helpful HR consultant - need a strong opener for her expertise.\n4. Highlight potential benefits like revenue increase, time management, etc. Make it clear without sounding too salesy.\n5. Softly suggest scheduling a call with a friendly invitation.\n\nNow, how to make this concise and not too long? Maybe list these points in bullet form or use numbered lists. Using an email template might help, but the user didn't specify the format. Since the original prompt is already structured with paragraphs, I can keep it similar but ensure each point is clear without unnecessary details.\n\nI should also include a closing invitation for scheduling a meeting to make the client feel comfortable. Maybe something like \"Looking forward to hearing from you!\" or \"We’d love to schedule a call soon!\" depending on their preference.\n\nPutting it all together, I'll draft an email that starts with the opening, acknowledges the issue, introduces Sarah, lists the benefits, and ends with inviting them to meet. Making sure each part is clear and flows naturally.\nCertainly! Here's a structured and organized email prompt based on your requirements:\n\n---\n\n**Subject:** Support Your Growth with Sarah – Scale Your Team Today!\n\nDear [Client],\n\nI wanted to reach out to you personally and acknowledge the overwhelming stress I'm experiencing right now. My plate is full, and unfortunately, I've hit a wall with my current situation.\n\nSarah from [HR Consulting] has proven her expertise in helping businesses like yours scale their teams efficiently. With her guidance, she can streamline hiring processes, implement effective systems, and settle your new hires quickly—enabling you to focus on more critical areas.\n\nI believe this potential $25,000 revenue increase is just the beginning. Together, we can achieve success. If you're interested in exploring how Sarah can help take your business to the next level, I’d love to schedule a call soon. Whether it's discussing your specific challenges or proposing a tailored solution, let’s explore new possibilities.\n\nLooking forward to hearing from you!\n\nBest regards,  \n[Your Name]  \n\n--- \n\nThis prompt is concise, professional, and includes all necessary elements while keeping it clear and inviting."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "736f0571-0d37-445f-8cc7-0741e84edc43",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "55003e2b4d3b171897e448716ab37a9f8f8f65829eb82fb8c2bba5f185d773a9"
+  },
+  "id": "U26I8qiAsLBNNlWLj_P5K",
+  "tags": []
+}
