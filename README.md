@@ -133,11 +133,11 @@ curl -X POST \
 
 ## 📸 Final Output Preview
 
-See the sample rendered email and captured fields: `assets/final_output_email.svg`
+![](assets/final_output_email.svg)
 
 ## 📈 Workflow Diagram
 
-Rendered workflow (visual): `assets/Email automation workflow.png` — a visual representation of the nodes and connections in the workflow. Open it in VS Code or a browser to zoom and inspect the layout.
+![](assets/workflow-diagram.svg)
 
 ---
 
